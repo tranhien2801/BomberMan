@@ -49,7 +49,7 @@ public class BombermanGame extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-        Level = "D:\\IdeaProjects\\BomberMan\\Bomberman\\res\\levels\\Level1.txt";
+        Level = "Bomberman/res/levels/Level1.txt";
 
         map = new Map(Level);
         map.insertFromFile(Level);

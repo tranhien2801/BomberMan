@@ -9,14 +9,14 @@ public abstract class AnimatedEntity extends Entity {
         super(x, y, img);
     }
 
-    protected int animate = 0;
+    public int animate = 0;
     protected final int MAX_ANIMATE = 7500;
 
     public AnimatedEntity() {
         super();
     }
 
-    protected void animate() {
+    public void animate() {
         if(animate < MAX_ANIMATE) animate++;
         else animate = 0;
     }

@@ -13,6 +13,11 @@ public class Bomber extends Entity {
 
     }
 
+    @Override
+    public boolean collide(Entity e) {
+        return false;
+    }
+
     public double getX() {
         return x;
     }

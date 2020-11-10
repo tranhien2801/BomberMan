@@ -11,6 +11,7 @@ public abstract class Entity {
     protected double x;
     protected double y;
     protected Image img;
+    protected Sprite sprite;
 
     public Entity( double x, double y, Image img) {
         this.x = x;
@@ -31,5 +32,22 @@ public abstract class Entity {
 
         gc.drawImage(base, x * Sprite.SCALED_SIZE, y * Sprite.SCALED_SIZE);
     }
+
     public abstract void update();
+
+    public abstract boolean collide(Entity e);
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public Image getImg() {
+        return img;
+    }
+
+
 }

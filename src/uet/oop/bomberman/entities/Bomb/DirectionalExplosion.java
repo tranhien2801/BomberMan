@@ -96,8 +96,4 @@ public class DirectionalExplosion extends AnimatedEntity {
         }
     }
 
-    @Override
-    public boolean collide(Entity e) {
-        return true;
-    }
 }

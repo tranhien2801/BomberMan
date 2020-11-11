@@ -1,10 +1,7 @@
 package uet.oop.bomberman.entities;
 
-import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
 import uet.oop.bomberman.graphics.Sprite;
 
 public abstract class Entity {
@@ -13,29 +10,23 @@ public abstract class Entity {
     protected Image img;
     protected Sprite sprite;
 
-    public Entity( double x, double y, Image img) {
+    public Entity() {
+
+    }
+
+    public Entity(int x, int y, Image img) {
         this.x = x;
         this.y = y;
         this.img = img;
     }
 
-    public Entity() {
-
-    }
 
     public void render(GraphicsContext gc) {
-        SnapshotParameters params = new SnapshotParameters();
-        params.setFill(Color.TRANSPARENT);
-
-        ImageView iv = new ImageView(img);
-        Image base = iv.snapshot(params, null);
-
-        gc.drawImage(base, x * Sprite.SCALED_SIZE, y * Sprite.SCALED_SIZE);
+        gc.drawImage(img, x * Sprite.SCALED_SIZE, y * Sprite.SCALED_SIZE);
     }
 
     public abstract void update();
 
-    public abstract boolean collide(Entity e);
 
     public double getX() {
         return x;
@@ -49,5 +40,7 @@ public abstract class Entity {
         return img;
     }
 
-
+    public void setImg(Image img) {
+        this.img = img;
+    }
 }

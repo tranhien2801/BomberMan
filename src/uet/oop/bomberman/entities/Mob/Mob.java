@@ -3,14 +3,13 @@ package uet.oop.bomberman.entities.Mob;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.AnimatedEntity;
 
-import java.awt.*;
-
 public abstract class Mob extends AnimatedEntity {
 
+    protected double speed = 0.05;
     protected int direction = -1;
     protected boolean alive = true;
     protected boolean moving = false;
-    public int timeAfter = 80;
+    public int timeAfter = 60;
 
     public Mob() {}
 
@@ -27,6 +26,8 @@ public abstract class Mob extends AnimatedEntity {
     protected abstract boolean canMove(double x, double y);
 
     protected abstract void calculateMove();
+
+    public abstract boolean checkLive();
 
     public boolean isAlive() {
         return alive;

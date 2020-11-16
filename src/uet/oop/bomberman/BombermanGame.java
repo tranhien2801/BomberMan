@@ -55,7 +55,9 @@ public class BombermanGame extends Application {
 
 
     public static void main(String[] args) {
+        game_sound.sound_effect("sound/background_music.mp3", 1, true);
         Application.launch(BombermanGame.class);
+
     }
 
     @Override
@@ -86,7 +88,6 @@ public class BombermanGame extends Application {
         root.getChildren().add(canvas);
         root.getChildren().add(canvasBomb);
         root.getChildren().add(canvas1);
-        //music();
 
 
         // Tao scene
@@ -165,7 +166,6 @@ public class BombermanGame extends Application {
                 updateBombs();
                 render1();
                 update1();
-
             }
         };
         timer.start();
@@ -332,10 +332,5 @@ public class BombermanGame extends Application {
 	| Getter & Setter
 	|--------------------------------------------------------------------------
 	 */
-    public void music() {
-        String s = "background.mp3";
-        Media media = new Media(new File(s).toURI().toString());
-        MediaPlayer mediaPlayer = new MediaPlayer(media);
-        mediaPlayer.play();
-    }
+   
 }

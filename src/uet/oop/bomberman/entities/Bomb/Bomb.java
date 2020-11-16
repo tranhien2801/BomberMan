@@ -8,6 +8,7 @@ import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Mob.Mob;
 import uet.oop.bomberman.entities.Tile.Brick;
 import uet.oop.bomberman.entities.Tile.Wall;
+import uet.oop.bomberman.game_sound;
 import uet.oop.bomberman.graphics.Sprite;
 
 public class Bomb extends AnimatedEntity {
@@ -60,6 +61,7 @@ public class Bomb extends AnimatedEntity {
         for(int i = 0; i < explosions.length; i++) {
             explosions[i] = new DirectionalExplosion((int)this.x, (int)this.y, i, BombermanGame.bombRadius);
         }
+        game_sound.sound_effect("sound/bomb_explosion.mp3", 1, false);
     }
 
     public void updateExplosions() {
@@ -75,6 +77,7 @@ public class Bomb extends AnimatedEntity {
                 }
             }
         }
+        //game_sound.sound_effect("sound/bomb_explosion.mp3", 0.2, false);
     }
 
     protected void removeExplosions() {

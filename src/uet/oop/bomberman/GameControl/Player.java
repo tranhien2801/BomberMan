@@ -10,6 +10,7 @@ import uet.oop.bomberman.entities.PowerUp;
 import uet.oop.bomberman.entities.Tile.Brick;
 import uet.oop.bomberman.entities.Tile.Grass;
 import uet.oop.bomberman.entities.Tile.Wall;
+import uet.oop.bomberman.game_sound;
 import uet.oop.bomberman.graphics.Sprite;
 
 
@@ -89,9 +90,10 @@ public class Player extends Mob {
         if(entity1 instanceof Wall || entity1 instanceof Brick
         || entity2 instanceof Wall || entity2 instanceof Brick
         || entity3 instanceof Wall || entity3 instanceof Brick
-        || entity4 instanceof Wall || entity4 instanceof Brick)
-           return false;
-
+        || entity4 instanceof Wall || entity4 instanceof Brick) {
+            game_sound.sound_effect("sound/cant_move.wav", 1, false);
+            return false;
+        }
         return true;
     }
 
@@ -123,6 +125,7 @@ public class Player extends Mob {
     }
 
     protected void putBomb(int x, int y) {
+        game_sound.sound_effect("sound/bomb_put.wav", 1, false);
         Bomb bomb = new Bomb(x, y, Sprite.bomb.getFxImage());
         BombermanGame.bombs.add(bomb);
     }
@@ -145,17 +148,21 @@ public class Player extends Mob {
         Entity entity = BombermanGame.getEntity((int)(x + 0.3), (int)(y + 0.3));
         if(entity instanceof PowerUp && ((PowerUp) entity).getMs() == "s") {
             this.speed = 0.1;
+            game_sound.sound_effect("sound/power_up.wav", 1, false);
             return true;
         }
         if(entity instanceof PowerUp && ((PowerUp) entity).getMs() == "b") {
             BombermanGame.bombRate = 5;
+            game_sound.sound_effect("sound/power_up.wav", 1, false);
             return true;
         }
         if(entity instanceof PowerUp && ((PowerUp) entity).getMs() == "f") {
+            game_sound.sound_effect("sound/power_up.wav", 1, false);
             BombermanGame.bombRadius = 2;
             return true;
         }
         if(entity instanceof PowerUp && ((PowerUp) entity).getMs() == "x" && BombermanGame.enemies.size() == 0) {
+            game_sound.sound_effect("sound/level_win.wav", 1, false);
             return true;
         }
         return false;

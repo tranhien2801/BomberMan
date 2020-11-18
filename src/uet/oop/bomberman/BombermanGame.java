@@ -18,6 +18,8 @@ import uet.oop.bomberman.entities.Bomb.Bomb;
 import uet.oop.bomberman.entities.Bomb.Explosion;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Mob.Enemy.Balloom;
+import uet.oop.bomberman.entities.Mob.Enemy.Enemy;
+import uet.oop.bomberman.entities.Mob.Enemy.Oneal;
 import uet.oop.bomberman.entities.PowerUp;
 import uet.oop.bomberman.entities.Tile.Brick;
 import uet.oop.bomberman.entities.Tile.Grass;
@@ -42,7 +44,7 @@ public class BombermanGame extends Application {
     private Canvas canvasBomb;
     public static List<Entity> stillObjects = new ArrayList<>();
     public static List<Entity> powerUps = new ArrayList<>();
-    public static List<Balloom>   enemies = new ArrayList<>();
+    public static List<Enemy>   enemies = new ArrayList<>();
     public static List<Brick> bricks = new ArrayList<>();
     public static List<Bomb> bombs = new ArrayList<>();
     public static List<Explosion> explosions = new ArrayList<>();
@@ -199,8 +201,8 @@ public class BombermanGame extends Application {
                     enemies.add(enemy);
                 }
                 if(map.map.get(i).charAt(j) == '2') {
-                    Balloom enemy = new Balloom(j, i, Sprite.oneal_left1.getFxImage());
-                    enemies.add(enemy);
+                    //Oneal enemy = new Oneal(j, i, Sprite.oneal_left1.getFxImage());
+                    //enemies.add(enemy);
                 }
                 if(map.map.get(i).charAt(j) == 'b') {
                     PowerUp powerUp = new PowerUp(j, i, Sprite.powerup_bombs.getFxImage(), "b");
@@ -337,5 +339,9 @@ public class BombermanGame extends Application {
         Media media = new Media(new File(s).toURI().toString());
         MediaPlayer mediaPlayer = new MediaPlayer(media);
         mediaPlayer.play();
+    }
+
+    public static int getMapWidth() {
+        return map.WIDTH;
     }
 }

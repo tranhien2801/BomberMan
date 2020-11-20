@@ -1,9 +1,7 @@
 package uet.oop.bomberman.entities.Bomb;
 
 import uet.oop.bomberman.AnimatedEntity;
-import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.Entity;
-import uet.oop.bomberman.entities.Mob.Mob;
 import uet.oop.bomberman.entities.Tile.Wall;
 
 public class DirectionalExplosion extends AnimatedEntity {
@@ -52,20 +50,11 @@ public class DirectionalExplosion extends AnimatedEntity {
                     break;
             }
             explosions[i] = new Explosion(x, y, direction, last);
-            BombermanGame.explosions.add(explosions[i]);
+            bombermanGame.explosions.add(explosions[i]);
 
         }
     }
 
-
-    public Explosion explosionAt(int x, int y) {
-        for(int i = 0; i < explosions.length; i++) {
-            if(explosions[i].getX() == x && explosions[i].getX() == y) {
-                return explosions[i];
-            }
-        }
-        return null;
-    }
 
     private int calculatePermitedDistance() {
         int radius = 0;
@@ -77,12 +66,8 @@ public class DirectionalExplosion extends AnimatedEntity {
             if(direction == 2) x--;
             if(direction == 3) x++;
 
-            Entity a = BombermanGame.getEntity(x, y);
-
-            if(a instanceof Mob) radius++;
-
+            Entity a = bombermanGame.getEntity(x, y);
             if(a instanceof Wall) break;
-
             radius++;
         }
         return radius;

@@ -4,7 +4,7 @@
     <artifactId>bomberman</artifactId>
     <version>v0.1</version>
 
-    <name>Bomberman</name>
+    <name>bomberman</name>
 
     <dependencies>
         <dependency>
@@ -63,7 +63,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>uet.oop.bomberman.BombermanGame</mainClass>
+                            <mainClass>uet.oop.bomberman.bombermanGame</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

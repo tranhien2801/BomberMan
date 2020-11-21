@@ -12,7 +12,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -35,11 +34,8 @@ import uet.oop.bomberman.entities.Tile.Wall;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.Level.Map;
 
-
-import java.awt.*;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.EventListener;
 import java.util.List;
 
 
@@ -230,7 +226,6 @@ public class BombermanGame extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-        //game_sound.sound_effect("sound/background_music.mp3", 1, true);
         background_music.sound_effect("sound/background_music.wav", 1, true);
         changeLevel(level);
         loadBackground();
@@ -319,7 +314,6 @@ public class BombermanGame extends Application {
                     }
                 }
             }
-
         });
 
         Thread timeCount = new Thread() {
@@ -367,15 +361,19 @@ public class BombermanGame extends Application {
 
             @Override
             public void handle(long l) {
-               /* if(checkPassLevel) {
+                if(checkPassLevel) {
                     timeDelay = 100;
                     checkPassLevel = false;
-                }*/
+                }
                 if(timeGame > 0 && lives > 0) {
                     if(timeDelay > 0) {
                         timeDelay--;
-                        textEndGame.setText("  Level    " + level);
+                        textEndGame.setText("    Level  " + level);
                         stage.setScene(sceneEnd);
+                        player.UpPressed = false;
+                        player.DownPressed = false;
+                        player.LeftPressed = false;
+                        player.RightPressed = false;
                     } else {
                         updateBombs();
                         render1();
@@ -457,7 +455,6 @@ public class BombermanGame extends Application {
 
         for(int i = 0; i < map.HEIGHT; i++) {
             for (int j = 0; j < map.map.get(i).length(); j++) {
-                Entity object;
                 if(map.map.get(i).charAt(j) == 'p') {
                     player = new Player(j, i + 1, Sprite.player_down.getFxImage());
                 }
@@ -539,10 +536,6 @@ public class BombermanGame extends Application {
         gc.drawImage(imgStart, Sprite.SCALED_SIZE * map.WIDTH, Sprite.SCALED_SIZE * (map.HEIGHT + 1));
     }
 
-    public void renderEnd() {
-        //gcEnd.drawImage();
-    }
-
     public void render() {
         stillObjects.forEach(g -> g.render(gc));
     }
@@ -618,7 +611,5 @@ public class BombermanGame extends Application {
         }
         return false;
     }
-
-
 
 }

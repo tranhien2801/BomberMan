@@ -36,19 +36,11 @@ public class Player extends Mob {
 
     public Player() {
         super();
-        UpPressed = false;
-        DownPressed = false;
-        LeftPressed = false;
-        RightPressed = false;
     }
 
     public Player(int x, int y, Image img) {
         super(x, y, img);
         this.speed = 0.06;
-        UpPressed = false;
-        DownPressed = false;
-        LeftPressed = false;
-        RightPressed = false;
     }
 
 
@@ -318,9 +310,9 @@ public class Player extends Mob {
                 }
                 break;
             default:
-                img = Sprite.player_right.getFxImage();
+                img = Sprite.player_down.getFxImage();
                 if(moving) {
-                    img = Sprite.movingSprite(Sprite.player_right_1, Sprite.player_right_2, animate, 20).getFxImage();
+                    img = Sprite.movingSprite(Sprite.player_down_1, Sprite.player_down_2, animate, 20).getFxImage();
                 }
                 break;
         }

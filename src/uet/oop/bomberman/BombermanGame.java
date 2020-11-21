@@ -9,8 +9,6 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
 import javafx.scene.input.KeyEvent;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
 import uet.oop.bomberman.GameControl.Player;
@@ -26,7 +24,6 @@ import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.Level.Map;
 
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,10 +49,11 @@ public class BombermanGame extends Application {
     public static int bombRate = 1;
     public static int bombRadius = 1;
     public static int lives = 3;
+    public static game_sound background_music = new game_sound();
 
 
     public static void main(String[] args) {
-        game_sound.sound_effect("sound/background_music.mp3", 1, true);
+        background_music.sound_effect("sound/background_music.wav", 1, true);
         Application.launch(BombermanGame.class);
 
     }
@@ -158,7 +156,7 @@ public class BombermanGame extends Application {
         // Them scene vao stage
         stage.setScene(scene);
         stage.show();
-
+        
         AnimationTimer timer = new AnimationTimer() {
 
             @Override

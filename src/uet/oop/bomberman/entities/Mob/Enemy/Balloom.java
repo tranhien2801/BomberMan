@@ -7,9 +7,12 @@ import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Mob.Mob;
 import uet.oop.bomberman.entities.Tile.Brick;
 import uet.oop.bomberman.entities.Tile.Wall;
+import uet.oop.bomberman.game_sound;
 import uet.oop.bomberman.graphics.Sprite;
 
 public class Balloom extends Mob {
+
+    public game_sound enemy_die = new game_sound();
 
     public Balloom(int x, int y, Image img) {
         super(x, y, img);
@@ -95,6 +98,7 @@ public class Balloom extends Mob {
     public boolean checkLive() {
         if(BombermanGame.isExplosion((int) x, (int) y) || BombermanGame.isExplosion((int) x, (int)(y + 1))
                 || BombermanGame.isExplosion((int)(x + 1), (int) y) || BombermanGame.isExplosion((int)(x + 1), (int)(y + 1))) {
+            enemy_die.sound_effect("sound/enemy_die.wav", 0.5, false);
             return false;
         }
         return true;

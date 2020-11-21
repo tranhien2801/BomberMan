@@ -7,7 +7,8 @@ import uet.oop.bomberman.entities.Mob.Enemy.AI.AI;
 
 public abstract class Mob extends AnimatedEntity {
 
-    public double speed = 0.05;
+
+    public double speed = 0.06;
     protected int direction = -1;
     protected boolean alive = true;
     protected boolean moving = false;

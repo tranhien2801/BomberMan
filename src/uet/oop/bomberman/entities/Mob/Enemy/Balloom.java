@@ -6,6 +6,7 @@ import uet.oop.bomberman.graphics.Sprite;
 
 public class Balloom extends Enemy {
 
+
     public Balloom(int x, int y, Image img) {
         super(x, y, img);
         ai = new balloomAI();

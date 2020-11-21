@@ -10,7 +10,10 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -33,7 +36,10 @@ import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.Level.Map;
 
 
+import java.awt.*;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.EventListener;
 import java.util.List;
 
 
@@ -42,9 +48,12 @@ public class BombermanGame extends Application {
     public static Map map;
     private GraphicsContext gc;
     private GraphicsContext gc1;
+    private GraphicsContext gcEnd;
     private Canvas canvas;
     private Canvas canvas1;
-    //private Image imgStart =
+    private Canvas canvasEnd;
+    private Image imgStart;
+    private ImageView imgView;
 
     public static List<Entity> stillObjects;
     public static List<Entity> powerUps;
@@ -55,25 +64,33 @@ public class BombermanGame extends Application {
     public static Player player;
 
     private String path;
+    public static boolean checkPassLevel = false;
     public static int level;
     public static int bombRate;
     public static int bombRadius;
     public static int lives;
-    private static int timeGame;
+    public static int timeGame;
     public static int score;
-    public static boolean onGame = false;
+    public static game_sound background_music;
+    private int timeNext;
+    private int timeDelayEnd;
+    private int timeDelay;
+
 
     private Text textTime;
     private Text textScore;
     private Text textLives;
     private Text textLevel;
     private Text textEndGame;
+    private Text textStart;
 
     public BombermanGame() {
+
 
         map = new Map();
         canvas1 = new Canvas();
         canvas = new Canvas();
+        canvasEnd = new Canvas();
         stillObjects = new ArrayList<>();
         powerUps = new ArrayList<>();
         enemies = new ArrayList<>();
@@ -86,10 +103,15 @@ public class BombermanGame extends Application {
         textLives = new Text();
         textLevel = new Text();
         textEndGame = new Text();
+        textStart = new Text();
+        background_music = new game_sound();
         this.level = 1;
         this.bombRadius = 1;
         this.bombRate = 1;
         this.timeGame = 200;
+        this.timeDelay = 100;
+        this.timeDelayEnd = 100;
+        this.timeNext = 50;
         this.score = 0;
         this.lives = 3;
     }
@@ -97,6 +119,8 @@ public class BombermanGame extends Application {
         map = new Map();
         canvas1 = new Canvas();
         canvas = new Canvas();
+        canvasEnd = new Canvas();
+        player = new Player();
         stillObjects = new ArrayList<>();
         powerUps = new ArrayList<>();
         enemies = new ArrayList<>();
@@ -109,14 +133,19 @@ public class BombermanGame extends Application {
         textLives = new Text();
         textLevel = new Text();
         textEndGame = new Text();
+        textStart = new Text();
+        background_music = new game_sound();
         this.bombRadius = bombRadius;
         this.bombRate = bombRate;
         this.level = level;
         this.timeGame = 200;
+        this.timeDelay = 100;
+        this.timeDelayEnd = 100;
+        this.timeNext = 50;
         this.score = score;
         this.lives = lives;
+
         changeLevel(level);
-        System.out.println(level);
     }
 
 
@@ -125,47 +154,16 @@ public class BombermanGame extends Application {
 	| ChangeLevel
 	|--------------------------------------------------------------------------
 	 */
-    public void newGame() {
-        resetProperties();
-        changeLevel(1);
-    }
 
-    public void nextLevel() {
-        changeLevel(level + 1);
-    }
-
-    private void resetProperties() {
-        powerUps.clear();
-        bombRate = 1;
-        bombRadius = 1;
-        if(player != null) {
-            player.speed = 0.05;
-        }
-    }
-
-    public void gameStart() {
-        path = "res/levels/Level1.txt";
-
-        map = new Map(path);
-        map.insertFromFile(path);
-        createMap();
-
-        Font font = Font.font("Consolas", FontWeight.BOLD, 28);
-        // Tao Canvas
-        canvas = new Canvas(Sprite.SCALED_SIZE * map.WIDTH, Sprite.SCALED_SIZE * (map.HEIGHT + 1));
-        gc = canvas.getGraphicsContext2D();
-        gc.fillRect(0, 0, Sprite.SCALED_SIZE * map.WIDTH, Sprite.SCALED_SIZE * (map.HEIGHT + 1));
-
-
-    }
 
     public void changeLevel(int level) {
-       // game_sound.sound_effect("level_start.mp3", 1, false);
         enemies.clear();
         bombs.clear();
         bricks.clear();
         stillObjects.clear();
         powerUps.clear();
+
+        timeDelay = 100;
 
         path = "res/levels/Level" + level + ".txt";
 
@@ -174,10 +172,16 @@ public class BombermanGame extends Application {
         createMap();
 
         Font font = Font.font("Consolas", FontWeight.BOLD, 18);
+        Font fontStart = Font.font("Arial Rounded MT Bold", FontWeight.BOLD, 68);
+        Font fontEnd = Font.font("Arial Rounded MT Bold", FontWeight.BOLD, 68);
 
         // Tao Canvas
         canvas = new Canvas(Sprite.SCALED_SIZE * map.WIDTH, Sprite.SCALED_SIZE * (map.HEIGHT + 1));
         gc = canvas.getGraphicsContext2D();
+
+        canvasEnd = new Canvas(Sprite.SCALED_SIZE * map.WIDTH, Sprite.SCALED_SIZE * (map.HEIGHT + 1));
+        gcEnd = canvasEnd.getGraphicsContext2D();
+        gcEnd.fillRect(0, 0, Sprite.SCALED_SIZE * map.WIDTH, Sprite.SCALED_SIZE * (map.HEIGHT + 1));
 
         canvas1 = new Canvas(Sprite.SCALED_SIZE * map.WIDTH, Sprite.SCALED_SIZE * (map.HEIGHT + 1));
         gc1 = canvas1.getGraphicsContext2D();
@@ -205,6 +209,119 @@ public class BombermanGame extends Application {
         textLevel.setX(800);
         textLevel.setY(20);
 
+        textStart.setFont(fontStart);
+        textStart.setFill(Color.WHITE);
+        textStart.setX(430);
+        textStart.setY(370);
+
+        textEndGame.setFont(fontEnd);
+        textEndGame.setFill(Color.WHITE);
+        textEndGame.setX(300);
+        textEndGame.setY(230);
+    }
+
+
+    /*
+	|--------------------------------------------------------------------------
+	| Detections
+	|--------------------------------------------------------------------------
+	 */
+
+    @Override
+    public void start(Stage stage) throws Exception {
+
+        //game_sound.sound_effect("sound/background_music.mp3", 1, true);
+        background_music.sound_effect("sound/background_music.wav", 1, true);
+        changeLevel(level);
+        loadBackground();
+        System.out.println(timeDelay);
+
+        // Tao root container
+        Group rootStart = new Group();
+        rootStart.getChildren().add(canvas);
+        rootStart.getChildren().add(imgView);
+        rootStart.getChildren().add(textStart);
+
+        Group rootGame = new Group();
+        rootGame.getChildren().add(canvas);
+        rootGame.getChildren().add(canvas1);
+        rootGame.getChildren().add(textTime);
+        rootGame.getChildren().add(textScore);
+        rootGame.getChildren().add(textLives);
+        rootGame.getChildren().add(textLevel);
+
+        Group rootEnd = new Group();
+        rootEnd.getChildren().add(canvasEnd);
+        rootEnd.getChildren().add(textEndGame);
+
+        // Tao scene
+        Scene sceneStart = new Scene(rootStart);
+
+        Scene sceneEnd = new Scene(rootEnd);
+
+        Scene sceneGame = new Scene(rootGame);
+
+        sceneGame.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if (player != null) {
+                    switch (keyEvent.getCode()) {
+                        case UP:
+                        case W:
+                            player.UpPressed = true;
+                            break;
+                        case DOWN:
+                        case S:
+                            player.DownPressed = true;
+                            break;
+                        case LEFT:
+                        case A:
+                            player.LeftPressed = true;
+                            break;
+                        case RIGHT:
+                        case D:
+                            player.RightPressed = true;
+                            break;
+                        case SPACE:
+                        case E:
+                            player.putBomb = true;
+                            break;
+                    }
+                }
+            }
+        });
+
+        sceneGame.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if (player != null) {
+                    switch (keyEvent.getCode()) {
+                        case UP:
+                        case W:
+                            player.UpPressed = false;
+                            break;
+                        case DOWN:
+                        case S:
+                            player.DownPressed = false;
+                            break;
+                        case LEFT:
+                        case A:
+                            player.LeftPressed = false;
+                            break;
+                        case RIGHT:
+                        case D:
+                            player.RightPressed = false;
+                            break;
+                        case SPACE:
+                        case E:
+                            player.putBomb = false;
+                            break;
+                    }
+                }
+            }
+
+        });
+
         Thread timeCount = new Thread() {
             public void run() {
                 for (; timeGame >= 0; timeGame--) {
@@ -217,181 +334,109 @@ public class BombermanGame extends Application {
                 }
             }
         };
-        timeCount.start();
+
+        // AnimationTimer
+        AnimationTimer timeStart = new AnimationTimer() {
+
+            @Override
+            public void handle(long l) {
+                if(timeGame > 0 || lives > 0) {
+                    textStart.setText("Start");
+                }
+
+            }
+        };
+
+        AnimationTimer timeEnd = new AnimationTimer() {
+
+            @Override
+            public void handle(long l) {
+                textEndGame.setText("Game Over!");
+                if (timeDelayEnd > 0) {
+                    timeDelayEnd--;
+                } else {
+                    timeStart.start();
+                    timeCount.stop();
+                    stage.setScene(sceneStart);
+                }
+            }
+        };
 
 
-    }
+        AnimationTimer timeOnGame = new AnimationTimer() {
 
-    public void endGame() {
-
-        enemies.clear();
-        bombs.clear();
-        bricks.clear();
-        stillObjects.clear();
-        powerUps.clear();
-
-        path = "res/levels/Level1.txt";
-
-        map = new Map(path);
-        map.insertFromFile(path);
-        createMap();
-
-        Font font = Font.font("Consolas", FontWeight.BOLD, 68);
-        // Tao Canvas
-        canvas = new Canvas(Sprite.SCALED_SIZE * map.WIDTH, Sprite.SCALED_SIZE * (map.HEIGHT + 1));
-        gc = canvas.getGraphicsContext2D();
-        gc.fillRect(0, 0, Sprite.SCALED_SIZE * map.WIDTH, Sprite.SCALED_SIZE * (map.HEIGHT + 1));
-
-        textEndGame.setFont(font);
-        textEndGame.setFill(Color.WHITE);
-        textEndGame.setX(300);
-        textEndGame.setY(200);
-
-    }
-
-    /*
-	|--------------------------------------------------------------------------
-	| Detections
-	|--------------------------------------------------------------------------
-	 */
-
-    @Override
-    public void start(Stage stage) throws Exception {
-
-        game_sound.sound_effect("sound/background_music.mp3", 1, true);
-
-
-
-        if(!onGame) {
-            changeLevel(level);
-
-            // Tao root container
-            Group root = new Group();
-            root.getChildren().add(canvas);
-            root.getChildren().add(canvas1);
-            root.getChildren().add(textTime);
-            root.getChildren().add(textScore);
-            root.getChildren().add(textLives);
-            root.getChildren().add(textLevel);
-
-            // Tao scene
-            Scene scene = new Scene(root);
-
-            scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-                @Override
-                public void handle(KeyEvent keyEvent) {
-                    if (player != null) {
-                        switch (keyEvent.getCode()) {
-                            case UP:
-                            case W:
-                                player.UpPressed = true;
-                                break;
-                            case DOWN:
-                            case S:
-                                player.DownPressed = true;
-                                break;
-                            case LEFT:
-                            case A:
-                                player.LeftPressed = true;
-                                break;
-                            case RIGHT:
-                            case D:
-                                player.RightPressed = true;
-                                break;
-                            case SPACE:
-                            case E:
-                                player.putBomb = true;
-                                break;
-                        }
+            @Override
+            public void handle(long l) {
+               /* if(checkPassLevel) {
+                    timeDelay = 100;
+                    checkPassLevel = false;
+                }*/
+                if(timeGame > 0 && lives > 0) {
+                    if(timeDelay > 0) {
+                        timeDelay--;
+                        textEndGame.setText("  Level    " + level);
+                        stage.setScene(sceneEnd);
+                    } else {
+                        updateBombs();
+                        render1();
+                        update1();
+                        textScore.setText("Score: " + score);
+                        textLives.setText("Lives: " + lives);
+                        textLevel.setText("Level: " + level);
+                        stage.setScene(sceneGame);
+                    }
+                } else {
+                    if(timeNext > 0) {
+                        updateBombs();
+                        render1();
+                        update1();
+                        textScore.setText("Score: " + score);
+                        textLives.setText("Lives: " + lives);
+                        textLevel.setText("Level: " + level);
+                        timeNext--;
+                    } else {
+                        timeStart.stop();
+                        timeEnd.start();
+                        stage.setScene(sceneEnd);
                     }
                 }
-            });
+            }
+        };
 
-            scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
-                @Override
-                public void handle(KeyEvent keyEvent) {
-                    if (player != null) {
-                        switch (keyEvent.getCode()) {
-                            case UP:
-                            case W:
-                                player.UpPressed = false;
-                                break;
-                            case DOWN:
-                            case S:
-                                player.DownPressed = false;
-                                break;
-                            case LEFT:
-                            case A:
-                                player.LeftPressed = false;
-                                break;
-                            case RIGHT:
-                            case D:
-                                player.RightPressed = false;
-                                break;
-                            case SPACE:
-                            case E:
-                                player.putBomb = false;
-                                break;
-                        }
-                    }
+
+
+        // Render
+        render();
+        renderBackground();
+
+        // Them scene vao stage
+        stage.setTitle("Bomberman UET");
+        stage.setScene(sceneStart);
+        stage.show();
+
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent windowEvent) {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
+        timeStart.start();
+       // timeOnGame.stop();
+        //timeEnd.stop();
+        sceneStart.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (mouseEvent.getX() >= textStart.getX() && mouseEvent.getX() <= textStart.getX() + 120
+                        && mouseEvent.getY() >= textStart.getY() - 40 && mouseEvent.getY() <= textStart.getY()) {
+                    //timeStart.stop();
+                    timeOnGame.start();
+                    timeCount.start();
+                    stage.setScene(sceneGame);
                 }
+            }
+        });
 
-            });
-
-            AnimationTimer timer = new AnimationTimer() {
-
-                @Override
-                public void handle(long l) {
-                    updateBombs();
-                    render1();
-                    update1();
-                    textScore.setText("Score: " + score);
-                    textLives.setText("Lives: " + lives);
-                    textLevel.setText("Level: " + level);
-                }
-            };
-            timer.start();
-            render();
-
-            // Them scene vao stage
-            stage.setTitle("Bomberman UET");
-            stage.setScene(scene);
-            stage.show();
-
-            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent windowEvent) {
-                    Platform.exit();
-                    System.exit(0);
-                }
-            });
-
-        } else {
-            endGame();
-
-            // Tao root container
-            Group root = new Group();
-            root.getChildren().add(canvas);
-            root.getChildren().add(textEndGame);
-
-            // Tao scene
-            Scene scene = new Scene(root);
-
-            // Them scene vao stage
-            stage.setTitle("Bomberman UET");
-            stage.setScene(scene);
-            stage.show();
-
-            AnimationTimer timer = new AnimationTimer() {
-
-                @Override
-                public void handle(long l) {
-                    textEndGame.setText("Game Over!");
-                }
-            };
-            timer.start();
-            //renderBackground();
-        }
     }
 
 
@@ -460,6 +505,7 @@ public class BombermanGame extends Application {
 
     public void update1() {
         if(player != null)  player.update();
+
         updateBombs();
         updateEnermies();
     }
@@ -482,8 +528,19 @@ public class BombermanGame extends Application {
 	|--------------------------------------------------------------------------
 	 */
 
-    public void renderBackground(Image imgStart) {
-        gc.drawImage(imgStart, 0, 0);
+    public void loadBackground() {
+        Class<?> clazz = this.getClass();
+        InputStream input2 = clazz.getResourceAsStream("/sprites/background.png");
+        imgStart = new Image(input2,Sprite.SCALED_SIZE * map.WIDTH, Sprite.SCALED_SIZE * (map.HEIGHT + 1), false, true);
+        imgView = new ImageView(imgStart);
+    }
+
+    public void renderBackground() {
+        gc.drawImage(imgStart, Sprite.SCALED_SIZE * map.WIDTH, Sprite.SCALED_SIZE * (map.HEIGHT + 1));
+    }
+
+    public void renderEnd() {
+        //gcEnd.drawImage();
     }
 
     public void render() {

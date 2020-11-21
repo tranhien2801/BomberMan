@@ -8,9 +8,12 @@ import uet.oop.bomberman.entities.Mob.Mob;
 import uet.oop.bomberman.entities.Tile.Brick;
 import uet.oop.bomberman.entities.Tile.Grass;
 import uet.oop.bomberman.entities.Tile.Wall;
+import uet.oop.bomberman.game_sound;
 
 public abstract class Enemy extends Mob {
     protected AI ai;
+
+    public game_sound enemy_die = new game_sound();
 
     protected double _steps;
     protected Image imgDead;
@@ -75,6 +78,7 @@ public abstract class Enemy extends Mob {
     public void kill() {
         if(!alive)  return;
         alive = false;
+        bombermanGame.score += 100;
     }
 
     @Override
@@ -145,7 +149,7 @@ public abstract class Enemy extends Mob {
         if (!canMove(xd*speed, yd*speed)) {
             int cur = direction;
             while(direction == cur) direction = ai.calculateDirection();
-            System.out.println(direction);
+
             if(direction == 0) {
                 xd = 0;
                 yd = -1;
@@ -177,6 +181,7 @@ public abstract class Enemy extends Mob {
     public boolean checkLive() {
         if(bombermanGame.isExplosion((int) x, (int) y) || bombermanGame.isExplosion((int) x, (int)(y + 1))
                 || bombermanGame.isExplosion((int)(x + 1), (int) y) || bombermanGame.isExplosion((int)(x + 1), (int)(y + 1))) {
+            enemy_die.sound_effect("sound/enemy_die.wav", 0.5, false);
             return false;
         }
         return true;

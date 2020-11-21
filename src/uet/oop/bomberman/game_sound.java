@@ -7,9 +7,17 @@ import javafx.util.Duration;
 import java.io.File;
 
 public class game_sound {
-    public static void sound_effect(String sound_name, double vol, boolean repeat) {
-        Media media = new Media(new File(sound_name).toURI().toString());
-        MediaPlayer mediaPlayer = new MediaPlayer(media);
+
+    private static Media media;
+    private static MediaPlayer mediaPlayer;
+    private boolean repeat;
+
+    public game_sound() {}
+
+    public void sound_effect(String sound_name, double vol, boolean repeat) {
+        this.repeat = repeat;
+        media = new Media(new File(sound_name).toURI().toString());
+        mediaPlayer = new MediaPlayer(media);
         mediaPlayer.setVolume(vol);
         if (repeat) {
             mediaPlayer.setOnEndOfMedia(new Runnable() {
@@ -26,5 +34,9 @@ public class game_sound {
             }
         });*/
         mediaPlayer.play();
+    }
+
+    public void stopMedia() {
+        mediaPlayer.stop();
     }
 }

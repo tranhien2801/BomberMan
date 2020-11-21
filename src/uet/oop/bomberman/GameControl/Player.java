@@ -24,15 +24,31 @@ public class Player extends Mob {
     public boolean DownPressed;
     public boolean LeftPressed;
     public boolean RightPressed;
-    public boolean putBomb;
+    public boolean putBomb = false;
+    private int timeDelay = 30;
+
+    public game_sound player_die = new game_sound();
+    public game_sound cant_move = new game_sound();
+    public game_sound power_up = new game_sound();
+    public game_sound level_win = new game_sound();
+    public game_sound bomb_put = new game_sound();
 
 
     public Player() {
         super();
+        UpPressed = false;
+        DownPressed = false;
+        LeftPressed = false;
+        RightPressed = false;
     }
 
     public Player(int x, int y, Image img) {
         super(x, y, img);
+        this.speed = 0.06;
+        UpPressed = false;
+        DownPressed = false;
+        LeftPressed = false;
+        RightPressed = false;
     }
 
 
@@ -40,7 +56,6 @@ public class Player extends Mob {
     public void update() {
         if(!checkLive())   kill();
         if(!alive) {
-            game_sound.sound_effect("sound/player_die.mp3", 1, false);
             afterKill();
             return;
         }
@@ -51,8 +66,6 @@ public class Player extends Mob {
         animate();
         calculateMove();
         if(checkPass()) {
-            game_sound.sound_effect("sound/level_win.mp3", 1, false);
-            System.out.println("Yes");
             removePowerUp();
             passLevel();
         }
@@ -100,7 +113,7 @@ public class Player extends Mob {
         || entity2 instanceof Wall || entity2 instanceof Brick
         || entity3 instanceof Wall || entity3 instanceof Brick
         || entity4 instanceof Wall || entity4 instanceof Brick) {
-            game_sound.sound_effect("sound/cant_move.wav", 0.5, false);
+            cant_move.sound_effect("sound/cant_move.wav", 1, false);
             return false;
         }
 
@@ -117,7 +130,7 @@ public class Player extends Mob {
         || entity3 instanceof Bomb || entity4 instanceof Bomb)
         && (e1 instanceof Grass && e2 instanceof Grass
         && e3 instanceof Grass && e4 instanceof Grass)) {
-            game_sound.sound_effect("sound/cant_move.wav", 0.5, false);
+            cant_move.sound_effect("sound/cant_move.wav", 1, false);
             return false;
         }
 
@@ -140,7 +153,7 @@ public class Player extends Mob {
 
     /*
 	|--------------------------------------------------------------------------
-	| Bomb
+	| Bomb, PowerUp,
 	|--------------------------------------------------------------------------
 	 */
 
@@ -152,7 +165,7 @@ public class Player extends Mob {
     }
 
     protected void putBomb(int x, int y) {
-        game_sound.sound_effect("sound/bomb_put.wav", 1, false);
+        bomb_put.sound_effect("sound/bomb_put.wav", 1, false);
         Bomb bomb = new Bomb(x, y, Sprite.bomb.getFxImage());
         bombermanGame.bombs.add(bomb);
     }
@@ -174,18 +187,18 @@ public class Player extends Mob {
 
         Entity entity = bombermanGame.getEntity((int)(x + 0.3), (int)(y + 0.3));
         if(entity instanceof PowerUp && ((PowerUp) entity).getMs() == "s") {
-            this.speed = 0.1;
-            game_sound.sound_effect("sound/power_up.wav", 1, false);
+            this.speed = 0.08;
+            power_up.sound_effect("sound/power_up.wav", 1, false);
             return true;
         }
         if(entity instanceof PowerUp && ((PowerUp) entity).getMs() == "b") {
             bombermanGame.bombRate = 5;
-            game_sound.sound_effect("sound/power_up.wav", 1, false);
+            power_up.sound_effect("sound/power_up.wav", 1, false);
             return true;
         }
         if(entity instanceof PowerUp && ((PowerUp) entity).getMs() == "f") {
             bombermanGame.bombRadius = 2;
-            game_sound.sound_effect("sound/power_up.wav", 1, false);
+            power_up.sound_effect("sound/power_up.wav", 1, false);
             return true;
         }
         return false;
@@ -202,7 +215,8 @@ public class Player extends Mob {
     public boolean checkPass() {
         Entity entity = bombermanGame.getEntity((int)(x + 0.3), (int)(y + 0.3));
         if(entity instanceof PowerUp && ((PowerUp) entity).getMs() == "x" && bombermanGame.enemies.size() == 0) {
-
+            bombermanGame.background_music.stopMedia();
+            level_win.sound_effect("sound/level_win_1.wav", 1, false);
             return true;
         }
         return false;
@@ -210,6 +224,7 @@ public class Player extends Mob {
 
     public void passLevel() {
         bombermanGame.level++;
+        bombermanGame.checkPassLevel = true;
         bombermanGame = new BombermanGame(bombermanGame.level, bombermanGame.bombRadius,
                 bombermanGame.bombRate, bombermanGame.score, bombermanGame.lives);
     }
@@ -225,9 +240,6 @@ public class Player extends Mob {
         alive = false;
         if(bombermanGame.lives > 0) {
             bombermanGame.lives--;
-        } else {
-            bombermanGame = new BombermanGame(bombermanGame.level, bombermanGame.bombRadius,
-                    bombermanGame.bombRate, bombermanGame.score, bombermanGame.lives);
         }
     }
 
@@ -235,12 +247,12 @@ public class Player extends Mob {
     protected void afterKill() {
         if(timeAfter > 0) {
             timeAfter--;
-            img = Sprite.movingSprite(Sprite.player_dead1, Sprite.player_dead2, Sprite.player_dead3, animate, 60).getFxImage();
+            img = Sprite.movingSprite(Sprite.player_dead1, Sprite.player_dead2, Sprite.player_dead3, animate, 35).getFxImage();
         } else {
             bombermanGame.player = null;
-            if(bombermanGame.lives > 0) {
-                bombermanGame.player = new Player(1, 2, Sprite.player_down.getFxImage());
-            }
+            if(bombermanGame.lives > 0)
+            bombermanGame = new BombermanGame(bombermanGame.level, bombermanGame.bombRadius,
+                    bombermanGame.bombRate, bombermanGame.score, bombermanGame.lives);
         }
         animate();
 
@@ -250,6 +262,7 @@ public class Player extends Mob {
     public boolean checkLive() {
         if(bombermanGame.isExplosion((int) x, (int) y) || bombermanGame.isExplosion((int) x, (int)(y + 1))
         || bombermanGame.isExplosion((int)(x + 1), (int) y) || bombermanGame.isExplosion((int)(x + 1), (int)(y + 1))) {
+            player_die.sound_effect("sound/player_die_1.wav", 0.5, false);
             return false;
         }
         int x1 = (int) (x + 0.1);
@@ -266,6 +279,7 @@ public class Player extends Mob {
         Enemy enemy44 = bombermanGame.getEnemy(x2, y2, 1);
         if(enemy1 instanceof Enemy || enemy11 instanceof Enemy || enemy2 instanceof Enemy || enemy22 instanceof Enemy
         || enemy3 instanceof Enemy || enemy33 instanceof Enemy || enemy4 instanceof Enemy || enemy44 instanceof Enemy) {
+            player_die.sound_effect("sound/player_die_1.wav", 0.5, false);
             return false;
         }
         return true;

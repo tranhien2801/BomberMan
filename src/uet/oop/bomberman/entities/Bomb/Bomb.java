@@ -19,6 +19,8 @@ public class Bomb extends AnimatedEntity {
     protected DirectionalExplosion[] explosions = null;
     protected boolean exploded = false;
 
+    public game_sound bomb_explosion = new game_sound();
+
     public Bomb(int x, int y, Image img) {
         super(x, y, img);
         sprite = Sprite.bomb;
@@ -60,7 +62,7 @@ public class Bomb extends AnimatedEntity {
         for(int i = 0; i < explosions.length; i++) {
             explosions[i] = new DirectionalExplosion((int)this.x, (int)this.y, i, bombermanGame.bombRadius);
         }
-        game_sound.sound_effect("sound/bomb_explosion.mp3", 1, false);
+        bomb_explosion.sound_effect("sound/bomb_explosion_1.wav", 1, false);
     }
 
     public void updateExplosions() {

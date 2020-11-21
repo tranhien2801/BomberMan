@@ -1,6 +1,7 @@
 package uet.oop.bomberman.entities.Mob.Enemy;
 
 import javafx.scene.image.Image;
+<<<<<<< HEAD
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.GameControl.Player;
 import uet.oop.bomberman.entities.Entity;
@@ -8,17 +9,23 @@ import uet.oop.bomberman.entities.Mob.Mob;
 import uet.oop.bomberman.entities.Tile.Brick;
 import uet.oop.bomberman.entities.Tile.Wall;
 import uet.oop.bomberman.game_sound;
+=======
+import uet.oop.bomberman.entities.Mob.Enemy.AI.balloomAI;
+>>>>>>> fa7af81ce39dc9c3ef5c1a59208d41be6e5977dd
 import uet.oop.bomberman.graphics.Sprite;
 
-public class Balloom extends Mob {
+public class Balloom extends Enemy {
 
     public game_sound enemy_die = new game_sound();
 
     public Balloom(int x, int y, Image img) {
         super(x, y, img);
+        ai = new balloomAI();
+        direction = ai.calculateDirection();
     }
 
     @Override
+<<<<<<< HEAD
     public void update() {
         if(!checkLive())   kill();
         if(!alive) {
@@ -104,35 +111,41 @@ public class Balloom extends Mob {
         return true;
     }
 
+=======
+>>>>>>> fa7af81ce39dc9c3ef5c1a59208d41be6e5977dd
     public void chooseSprite() {
         switch (direction) {
             case 0:
-                img = Sprite.movingSprite(Sprite.balloom_left1, Sprite.balloom_left2, Sprite.balloom_left3, animate, 20).getFxImage();
+                img = Sprite.balloom_left1.getFxImage();
+                if(moving) {
+                    img = Sprite.movingSprite(Sprite.balloom_left1, Sprite.balloom_left2, Sprite.balloom_left3, animate, 20).getFxImage();
+                }
                 break;
             case 1:
-                img = Sprite.player_down.getFxImage();
+                img = Sprite.balloom_left1.getFxImage();
                 if (moving) {
                     img = Sprite.movingSprite(Sprite.balloom_right1, Sprite.balloom_right2, Sprite.balloom_right3, animate, 20).getFxImage();
                 }
                 break;
             case 2:
-                img = Sprite.player_left.getFxImage();
+                img = Sprite.balloom_right1.getFxImage();
                 if (moving) {
                     img = Sprite.movingSprite(Sprite.balloom_left1, Sprite.balloom_left2, Sprite.balloom_left3, animate, 20).getFxImage();
                 }
                 break;
             case 3:
-                img = Sprite.player_right.getFxImage();
+                img = Sprite.balloom_right1.getFxImage();
                 if (moving) {
                     img = Sprite.movingSprite(Sprite.balloom_right1, Sprite.balloom_right2, Sprite.balloom_right3, animate, 20).getFxImage();
                 }
                 break;
             default:
-                img = Sprite.player_right.getFxImage();
+                img = Sprite.balloom_left1.getFxImage();
                 if (moving) {
                     img = Sprite.movingSprite(Sprite.balloom_left1, Sprite.balloom_left2, Sprite.balloom_left3, animate, 20).getFxImage();
                 }
                 break;
         }
     }
+
 }

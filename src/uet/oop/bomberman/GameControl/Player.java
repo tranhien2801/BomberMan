@@ -2,9 +2,12 @@ package uet.oop.bomberman.GameControl;
 
 import javafx.scene.image.Image;
 import uet.oop.bomberman.BombermanGame;
+import uet.oop.bomberman.Game;
+import uet.oop.bomberman.Level.Map;
 import uet.oop.bomberman.entities.Bomb.Bomb;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Mob.Enemy.Balloom;
+import uet.oop.bomberman.entities.Mob.Enemy.Enemy;
 import uet.oop.bomberman.entities.Mob.Mob;
 import uet.oop.bomberman.entities.PowerUp;
 import uet.oop.bomberman.entities.Tile.Brick;
@@ -15,7 +18,6 @@ import uet.oop.bomberman.graphics.Sprite;
 
 
 public class Player extends Mob {
-
 
     public boolean UpPressed;
     public boolean DownPressed;
@@ -43,6 +45,7 @@ public class Player extends Mob {
     public void update() {
         if(!checkLive())   kill();
         if(!alive) {
+            game_sound.sound_effect("sound/player_die.mp3", 1, false);
             afterKill();
             return;
         }
@@ -52,6 +55,12 @@ public class Player extends Mob {
         chooseSprite();
         animate();
         calculateMove();
+        if(checkPass()) {
+            game_sound.sound_effect("sound/level_win.mp3", 1, false);
+            System.out.println("Yes");
+            removePowerUp();
+            passLevel();
+        }
     }
 
 
@@ -88,17 +97,39 @@ public class Player extends Mob {
        int x2 = (int) (xa + 0.7);
        int y1 = (int) (ya + 0.15);
        int y2 = (int) (ya + 0.9);
-       Entity entity1 = BombermanGame.getEntity(x1, y1);
-       Entity entity2 = BombermanGame.getEntity(x1, y2);
-       Entity entity3 = BombermanGame.getEntity(x2, y1);
-       Entity entity4 = BombermanGame.getEntity(x2, y2);
+       Entity entity1 = bombermanGame.getEntity(x1, y1);
+       Entity entity2 = bombermanGame.getEntity(x1, y2);
+       Entity entity3 = bombermanGame.getEntity(x2, y1);
+       Entity entity4 = bombermanGame.getEntity(x2, y2);
         if(entity1 instanceof Wall || entity1 instanceof Brick
         || entity2 instanceof Wall || entity2 instanceof Brick
         || entity3 instanceof Wall || entity3 instanceof Brick
         || entity4 instanceof Wall || entity4 instanceof Brick) {
+<<<<<<< HEAD
             cant_move.sound_effect("sound/cant_move.wav", 1, false);
+=======
+            game_sound.sound_effect("sound/cant_move.wav", 0.5, false);
             return false;
         }
+
+        int xd1 = (int) (this.x + 0.1);
+        int xd2 = (int) (this.x + 0.7);
+        int yd1 = (int) (this.y + 0.15);
+        int yd2 = (int) (this.y + 0.9);
+        Entity e1 = bombermanGame.getEntity(xd1, yd1);
+        Entity e2 = bombermanGame.getEntity(xd1, yd2);
+        Entity e3 = bombermanGame.getEntity(xd2, yd1);
+        Entity e4 = bombermanGame.getEntity(xd2, yd2);
+
+        if((entity1 instanceof Bomb || entity2 instanceof Bomb
+        || entity3 instanceof Bomb || entity4 instanceof Bomb)
+        && (e1 instanceof Grass && e2 instanceof Grass
+        && e3 instanceof Grass && e4 instanceof Grass)) {
+            game_sound.sound_effect("sound/cant_move.wav", 0.5, false);
+>>>>>>> fa7af81ce39dc9c3ef5c1a59208d41be6e5977dd
+            return false;
+        }
+
         return true;
     }
 
@@ -123,7 +154,7 @@ public class Player extends Mob {
 	 */
 
     private void detectPutBomb() {
-        if(putBomb && BombermanGame.bombs.size() < BombermanGame.bombRate
+        if(putBomb && bombermanGame.bombs.size() < bombermanGame.bombRate
                 && canPutBomb((int)(this.x + 0.5), (int)(this.y + 0.5))) {
             putBomb((int)(this.x + 0.5), (int)(this.y + 0.5));
         }
@@ -132,7 +163,7 @@ public class Player extends Mob {
     protected void putBomb(int x, int y) {
         bomb_put.sound_effect("sound/bomb_put.wav", 1, false);
         Bomb bomb = new Bomb(x, y, Sprite.bomb.getFxImage());
-        BombermanGame.bombs.add(bomb);
+        bombermanGame.bombs.add(bomb);
     }
 
     protected boolean canPutBomb(int x, int y) {
@@ -150,13 +181,14 @@ public class Player extends Mob {
 
     protected boolean catchPowerUp() {
 
-        Entity entity = BombermanGame.getEntity((int)(x + 0.3), (int)(y + 0.3));
+        Entity entity = bombermanGame.getEntity((int)(x + 0.3), (int)(y + 0.3));
         if(entity instanceof PowerUp && ((PowerUp) entity).getMs() == "s") {
             this.speed = 0.1;
             power_up.sound_effect("sound/power_up.wav", 1, false);
             return true;
         }
         if(entity instanceof PowerUp && ((PowerUp) entity).getMs() == "b") {
+<<<<<<< HEAD
             BombermanGame.bombRate = 5;
             power_up.sound_effect("sound/power_up.wav", 1, false);
             return true;
@@ -169,17 +201,41 @@ public class Player extends Mob {
         if(entity instanceof PowerUp && ((PowerUp) entity).getMs() == "x" && BombermanGame.enemies.size() == 0) {
             BombermanGame.background_music.stopMedia();
             level_win.sound_effect("sound/level_win_1.wav", 1, false);
+=======
+            bombermanGame.bombRate = 5;
+            game_sound.sound_effect("sound/power_up.wav", 1, false);
+            return true;
+        }
+        if(entity instanceof PowerUp && ((PowerUp) entity).getMs() == "f") {
+            bombermanGame.bombRadius = 2;
+            game_sound.sound_effect("sound/power_up.wav", 1, false);
+>>>>>>> fa7af81ce39dc9c3ef5c1a59208d41be6e5977dd
             return true;
         }
         return false;
     }
 
     public void removePowerUp() {
-        for(int i = 0; i < BombermanGame.powerUps.size(); i++) {
-            if(BombermanGame.powerUps.get(i).getX() == (int)(x + 0.3) && BombermanGame.powerUps.get(i).getY() == (int)(y + 0.3)) {
-                BombermanGame.powerUps.remove(BombermanGame.powerUps.get(i));
+        for(int i = 0; i < bombermanGame.powerUps.size(); i++) {
+            if(bombermanGame.powerUps.get(i).getX() == (int)(x + 0.3) && bombermanGame.powerUps.get(i).getY() == (int)(y + 0.3)) {
+                bombermanGame.powerUps.remove(bombermanGame.powerUps.get(i));
             }
         }
+    }
+
+    public boolean checkPass() {
+        Entity entity = bombermanGame.getEntity((int)(x + 0.3), (int)(y + 0.3));
+        if(entity instanceof PowerUp && ((PowerUp) entity).getMs() == "x" && bombermanGame.enemies.size() == 0) {
+
+            return true;
+        }
+        return false;
+    }
+
+    public void passLevel() {
+        bombermanGame.level++;
+        bombermanGame = new BombermanGame(bombermanGame.level, bombermanGame.bombRadius,
+                bombermanGame.bombRate, bombermanGame.score, bombermanGame.lives);
     }
 
     /*
@@ -191,7 +247,12 @@ public class Player extends Mob {
     public void kill() {
         if(!alive)  return;
         alive = false;
-        BombermanGame.lives--;
+        if(bombermanGame.lives > 0) {
+            bombermanGame.lives--;
+        } else {
+            bombermanGame = new BombermanGame(bombermanGame.level, bombermanGame.bombRadius,
+                    bombermanGame.bombRate, bombermanGame.score, bombermanGame.lives);
+        }
     }
 
     @Override
@@ -200,9 +261,9 @@ public class Player extends Mob {
             timeAfter--;
             img = Sprite.movingSprite(Sprite.player_dead1, Sprite.player_dead2, Sprite.player_dead3, animate, 60).getFxImage();
         } else {
-            BombermanGame.player = null;
-            if(BombermanGame.lives > 0) {
-                BombermanGame.player = new Player(1, 1, Sprite.player_down.getFxImage());
+            bombermanGame.player = null;
+            if(bombermanGame.lives > 0) {
+                bombermanGame.player = new Player(1, 2, Sprite.player_down.getFxImage());
             }
         }
         animate();
@@ -211,15 +272,21 @@ public class Player extends Mob {
 
     @Override
     public boolean checkLive() {
+<<<<<<< HEAD
         if(BombermanGame.isExplosion((int) x, (int) y) || BombermanGame.isExplosion((int) x, (int)(y + 1))
         || BombermanGame.isExplosion((int)(x + 1), (int) y) || BombermanGame.isExplosion((int)(x + 1), (int)(y + 1))) {
             player_die.sound_effect("sound/player_die_1.wav", 0.5, false);
+=======
+        if(bombermanGame.isExplosion((int) x, (int) y) || bombermanGame.isExplosion((int) x, (int)(y + 1))
+        || bombermanGame.isExplosion((int)(x + 1), (int) y) || bombermanGame.isExplosion((int)(x + 1), (int)(y + 1))) {
+>>>>>>> fa7af81ce39dc9c3ef5c1a59208d41be6e5977dd
             return false;
         }
         int x1 = (int) (x + 0.1);
         int x2 = (int) (x + 0.7);
         int y1 = (int) (y + 0.15);
         int y2 = (int) (y + 0.9);
+<<<<<<< HEAD
         Entity entity1 = BombermanGame.getEntity(x1, y1);
         Entity entity2 = BombermanGame.getEntity(x1, y2);
         Entity entity3 = BombermanGame.getEntity(x2, y1);
@@ -227,6 +294,18 @@ public class Player extends Mob {
         if(entity1 instanceof Balloom || entity2 instanceof Balloom
         || entity3 instanceof Balloom || entity4 instanceof Balloom) {
             player_die.sound_effect("sound/player_die_1.wav", 0.5, false);
+=======
+        Enemy enemy1 = bombermanGame.getEnemy(x1, y1, 0);
+        Enemy enemy11 = bombermanGame.getEnemy(x1, y1, 2);
+        Enemy enemy2 = bombermanGame.getEnemy(x1, y2, 2);
+        Enemy enemy22 = bombermanGame.getEnemy(x1, y2, 1);
+        Enemy enemy3 = bombermanGame.getEnemy(x2, y1, 0);
+        Enemy enemy33 = bombermanGame.getEnemy(x2, y1, 3);
+        Enemy enemy4 = bombermanGame.getEnemy(x2, y2, 3);
+        Enemy enemy44 = bombermanGame.getEnemy(x2, y2, 1);
+        if(enemy1 instanceof Enemy || enemy11 instanceof Enemy || enemy2 instanceof Enemy || enemy22 instanceof Enemy
+        || enemy3 instanceof Enemy || enemy33 instanceof Enemy || enemy4 instanceof Enemy || enemy44 instanceof Enemy) {
+>>>>>>> fa7af81ce39dc9c3ef5c1a59208d41be6e5977dd
             return false;
         }
         return true;

@@ -17,7 +17,6 @@ public class Bomb extends AnimatedEntity {
     public int timeAfter = 40; //thoi gian de vu no bien mat
 
     protected DirectionalExplosion[] explosions = null;
-    //protected Brick [] bricks;
     protected boolean exploded = false;
 
     public game_sound bomb_explosion = new game_sound();
@@ -46,7 +45,7 @@ public class Bomb extends AnimatedEntity {
                 updateBrick();
                 timeAfter--;
             } else {
-                BombermanGame.bombs.remove(this);
+                bombermanGame.bombs.remove(this);
                 removeBricksDestroy();
                 removeExplosions();
             }
@@ -61,7 +60,7 @@ public class Bomb extends AnimatedEntity {
         exploded = true;
         explosions = new DirectionalExplosion[4];
         for(int i = 0; i < explosions.length; i++) {
-            explosions[i] = new DirectionalExplosion((int)this.x, (int)this.y, i, BombermanGame.bombRadius);
+            explosions[i] = new DirectionalExplosion((int)this.x, (int)this.y, i, bombermanGame.bombRadius);
         }
         bomb_explosion.sound_effect("sound/bomb_explosion_1.wav", 1, false);
     }
@@ -71,7 +70,7 @@ public class Bomb extends AnimatedEntity {
             for(int j = 0; j < explosions[i].explosions.length; j++) {
                 int xa = (int) explosions[i].explosions[j].getX();
                 int ya = (int) explosions[i].explosions[j].getY();
-                if(BombermanGame.getEntity(xa, ya) instanceof Brick) {
+                if(bombermanGame.getEntity(xa, ya) instanceof Brick) {
                     explosions[i].explosions[j].setImg(null);
                 } else {
                     explosions[i].explosions[j].animate = animate;
@@ -85,28 +84,28 @@ public class Bomb extends AnimatedEntity {
     protected void removeExplosions() {
         for(int i = 0; i < explosions.length; i++) {
             for(int j = 0; j < explosions[i].explosions.length; j++) {
-                BombermanGame.explosions.remove(explosions[i].explosions[j]);
+                bombermanGame.explosions.remove(explosions[i].explosions[j]);
             }
         }
     }
 
     protected void updateBrick() {
-        for(int i = 0; i < BombermanGame.bricks.size(); i++) {
-            int xa = (int)BombermanGame.bricks.get(i).getX();
-            int ya = (int)BombermanGame.bricks.get(i).getY();
-            if(BombermanGame.isExplosion(xa, ya)) {
-                BombermanGame.bricks.get(i).animate = animate;
-                BombermanGame.bricks.get(i).update();
+        for(int i = 0; i < bombermanGame.bricks.size(); i++) {
+            int xa = (int)bombermanGame.bricks.get(i).getX();
+            int ya = (int)bombermanGame.bricks.get(i).getY();
+            if(bombermanGame.isExplosion(xa, ya)) {
+                bombermanGame.bricks.get(i).animate = animate;
+                bombermanGame.bricks.get(i).update();
             }
         }
     }
 
     protected void removeBricksDestroy() {
-        for(int i = 0; i < BombermanGame.bricks.size(); i++) {
-            int xa = (int)BombermanGame.bricks.get(i).getX();
-            int ya = (int)BombermanGame.bricks.get(i).getY();
-            if(BombermanGame.isExplosion(xa, ya)) {
-                BombermanGame.bricks.remove(BombermanGame.bricks.get(i));
+        for(int i = 0; i < bombermanGame.bricks.size(); i++) {
+            int xa = (int)bombermanGame.bricks.get(i).getX();
+            int ya = (int)bombermanGame.bricks.get(i).getY();
+            if(bombermanGame.isExplosion(xa, ya)) {
+                bombermanGame.bricks.remove(bombermanGame.bricks.get(i));
                  i--;
             }
         }

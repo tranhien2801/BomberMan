@@ -33,6 +33,10 @@ public class Player extends Mob {
     public game_sound level_win = new game_sound();
     public game_sound bomb_put = new game_sound();
 
+    @Override
+    protected boolean canChangeOrient(double x, double y) {
+        return false;
+    }
 
     public Player() {
         super();

@@ -28,6 +28,8 @@ public abstract class Mob extends AnimatedEntity {
 
     protected abstract boolean canMove(double x, double y);
 
+    protected abstract boolean canChangeOrient(double x, double y);
+
     protected abstract void calculateMove();
 
     public abstract boolean checkLive();

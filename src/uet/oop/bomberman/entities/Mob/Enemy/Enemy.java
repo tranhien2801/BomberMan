@@ -18,8 +18,8 @@ public abstract class Enemy extends Mob {
     protected double _steps;
     protected Image imgDead;
 
-    private int xd = 0;
-    private int yd = 0;
+    protected int xd = 0;
+    protected int yd = 0;
 
     public Enemy(int x, int y, Image img) {
 
@@ -92,8 +92,7 @@ public abstract class Enemy extends Mob {
     }
 
     @Override
-    protected boolean canMove(double x, double y) {
-
+    protected boolean canChangeOrient(double x, double y) {
         double xa = x + this.x;
         double ya = y + this.y;
 
@@ -105,76 +104,21 @@ public abstract class Enemy extends Mob {
         Entity entity1 = bombermanGame.getEntity(x1, y1);
         Entity entity2 = bombermanGame.getEntity(x1, y2);
         Entity entity3 = bombermanGame.getEntity(x2, y1);
-        Entity entity4 = bombermanGame.getEntity(x2, y2);
-        if (direction == 0 && (entity1 instanceof Wall || entity1 instanceof Brick)) {
-            return false;
-        }
-        if (direction == 1 && (entity2 instanceof Wall || entity2 instanceof Brick)) {
-            return false;
-        }
-        if (direction == 2 && (entity4 instanceof Wall || entity4 instanceof Brick)) {
-            return false;
-        }
-        if (direction == 3 && (entity3 instanceof Wall || entity3 instanceof Brick)) {
-            return false;
-        }
-        if (direction != -1) {
-            if (entity1 instanceof Wall || entity1 instanceof Brick
-                    || entity2 instanceof Wall || entity2 instanceof Brick
-                    || entity3 instanceof Wall || entity3 instanceof Brick
-                    || entity4 instanceof Wall || entity4 instanceof Brick) return false;
-        }
+        Entity entity4 = bombermanGame.getEntity(x2 - 1, y2);
 
-        int xd1 = (int) (this.x + 0.1);
-        int xd2 = (int) (this.x + 0.7);
-        int yd1 = (int) (this.y + 0.15);
-        int yd2 = (int) (this.y + 0.9);
-        Entity e1 = bombermanGame.getEntity(xd1, yd1);
-        Entity e2 = bombermanGame.getEntity(xd1, yd2);
-        Entity e3 = bombermanGame.getEntity(xd2, yd1);
-        Entity e4 = bombermanGame.getEntity(xd2, yd2);
-        if((entity1 instanceof Bomb || entity2 instanceof Bomb
-                || entity3 instanceof Bomb || entity4 instanceof Bomb)
-                && (e1 instanceof Grass && e2 instanceof Grass
-                && e3 instanceof Grass && e4 instanceof Grass)) {
-            return false;
-        }
+        int count = 4;
+        if (entity1 instanceof Wall || entity1 instanceof Brick) count--;
+        if (entity2 instanceof Wall || entity2 instanceof Brick) count--;
+        if (entity3 instanceof Wall || entity3 instanceof Brick) count--;
+        if (entity4 instanceof Wall || entity4 instanceof Brick) count--;
+        System.out.println(entity1.getClass());
+        System.out.println(entity2.getClass());
+        System.out.println(entity3.getClass());
+        System.out.println(entity4.getClass());
+        System.out.println();
+        if (count >= 2) return true;
 
-        return true;
-    }
-
-    @Override
-    protected void calculateMove() {
-
-        if (!canMove(xd*speed, yd*speed)) {
-            int cur = direction;
-            while(direction == cur) direction = ai.calculateDirection();
-
-            if(direction == 0) {
-                xd = 0;
-                yd = -1;
-            }
-            if(direction == 1) {
-                xd = 0;
-                yd = 1;
-            }
-            if(direction == 2) {
-                yd = 0;
-                xd = -1;
-            }
-            if(direction == 3) {
-                yd = 0;
-                xd = 1;
-            }
-
-        }
-
-        if(xd != 0 || yd != 0) {
-            move(xd * speed, yd * speed);
-            moving = true;
-        } else {
-            moving = false;
-        }
+        return false;
     }
 
     @Override

@@ -105,6 +105,11 @@ public class Bomb extends AnimatedEntity {
             int xa = (int)bombermanGame.bricks.get(i).getX();
             int ya = (int)bombermanGame.bricks.get(i).getY();
             if(bombermanGame.isExplosion(xa, ya)) {
+                StringBuffer fixed = new StringBuffer(BombermanGame.map.map.get(ya - 1));
+                fixed.setCharAt(xa, ' ');
+                String newFixed = fixed.toString();
+                BombermanGame.map.map.remove(ya - 1);
+                BombermanGame.map.map.add(ya - 1, newFixed);
                 bombermanGame.bricks.remove(bombermanGame.bricks.get(i));
                  i--;
             }

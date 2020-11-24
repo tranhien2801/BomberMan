@@ -17,6 +17,5 @@ public class Brick extends AnimatedEntity {
                 Sprite.brick_exploded2, animate, 50).getFxImage();
     }
 
-
 }
 

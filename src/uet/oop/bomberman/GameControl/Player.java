@@ -105,7 +105,7 @@ public class Player extends Mob {
         || entity2 instanceof Wall || entity2 instanceof Brick
         || entity3 instanceof Wall || entity3 instanceof Brick
         || entity4 instanceof Wall || entity4 instanceof Brick) {
-            cant_move.sound_effect("sound/cant_move.wav", 1, false);
+            cant_move.sound_effect("sound/cant_move.wav", 0.3, false);
             return false;
         }
 
@@ -122,7 +122,7 @@ public class Player extends Mob {
         || entity3 instanceof Bomb || entity4 instanceof Bomb)
         && (e1 instanceof Grass && e2 instanceof Grass
         && e3 instanceof Grass && e4 instanceof Grass)) {
-            cant_move.sound_effect("sound/cant_move.wav", 1, false);
+            cant_move.sound_effect("sound/cant_move.wav", 0.3, false);
             return false;
         }
 
@@ -215,7 +215,9 @@ public class Player extends Mob {
     }
 
     public void passLevel() {
-        bombermanGame.level++;
+        if(bombermanGame.level < 2) {
+            bombermanGame.level++;
+        }
         bombermanGame.checkPassLevel = true;
         bombermanGame = new BombermanGame(bombermanGame.level, bombermanGame.bombRadius,
                 bombermanGame.bombRate, bombermanGame.score, bombermanGame.lives);
@@ -252,8 +254,8 @@ public class Player extends Mob {
 
     @Override
     public boolean checkLive() {
-        if(bombermanGame.isExplosion((int) x, (int) y) || bombermanGame.isExplosion((int) x, (int)(y + 1))
-        || bombermanGame.isExplosion((int)(x + 1), (int) y) || bombermanGame.isExplosion((int)(x + 1), (int)(y + 1))) {
+        if(bombermanGame.isExplosion((int) (x + 0.1), (int) (y + 0.1)) || bombermanGame.isExplosion((int) (0.1 + x), (int)(y + 0.9))
+        || bombermanGame.isExplosion((int)(x + 0.9), (int) (y + 0.1)) || bombermanGame.isExplosion((int)(x + 0.9), (int)(y + 0.9))) {
             player_die.sound_effect("sound/player_die_1.wav", 0.5, false);
             return false;
         }

@@ -5,4 +5,5 @@ public class balloomAI extends AI{
     public int calculateDirection() {
         return random.nextInt(4);
     }
+
 }

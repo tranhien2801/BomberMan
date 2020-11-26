@@ -37,6 +37,7 @@ import uet.oop.bomberman.Level.Map;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
 public class BombermanGame extends Application {
@@ -161,8 +162,9 @@ public class BombermanGame extends Application {
 
         timeDelay = 100;
 
-        path = "res/levels/Level" + level + ".txt";
-
+        Random random_level = new Random();
+        path = "res/levels/Level" + level + "." + random_level.nextInt(6) + ".txt";
+        //path = "res/levels/Level" + 2 + "." + 0 + ".txt";
         map = new Map(path);
         map.insertFromFile(path);
         createMap();
@@ -331,7 +333,6 @@ public class BombermanGame extends Application {
 
         // AnimationTimer
         AnimationTimer timeStart = new AnimationTimer() {
-
             @Override
             public void handle(long l) {
                 if(timeGame > 0 || lives > 0) {
@@ -351,7 +352,7 @@ public class BombermanGame extends Application {
                 } else {
                     timeStart.start();
                     timeCount.stop();
-                    stage.setScene(sceneStart);
+                   // stage.setScene(sceneStart);
                 }
             }
         };
@@ -376,6 +377,7 @@ public class BombermanGame extends Application {
                         player.RightPressed = false;
                     } else {
                         updateBombs();
+                        render();
                         render1();
                         update1();
                         textScore.setText("Score: " + score);
@@ -386,6 +388,7 @@ public class BombermanGame extends Application {
                 } else {
                     if(timeNext > 0) {
                         updateBombs();
+                        render();
                         render1();
                         update1();
                         textScore.setText("Score: " + score);
@@ -404,7 +407,6 @@ public class BombermanGame extends Application {
 
 
         // Render
-        render();
         renderBackground();
 
         // Them scene vao stage
@@ -447,7 +449,7 @@ public class BombermanGame extends Application {
                 if(map.map.get(i).charAt(j) == '#') {
                     object = new Wall(j, i + 1, Sprite.wall.getFxImage());
                 } else {
-                    object = new Grass(j, i + 1, Sprite.grass.getFxImage());
+                    object = new Grass(j, i + 1, 0, 9, Sprite.grass.getFxImage());
                 }
                 stillObjects.add(object);
             }
@@ -502,7 +504,6 @@ public class BombermanGame extends Application {
 
     public void update1() {
         if(player != null)  player.update();
-
         updateBombs();
         updateEnermies();
     }

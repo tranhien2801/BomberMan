@@ -5,8 +5,13 @@ import uet.oop.bomberman.entities.Entity;
 
 public class Grass extends Entity {
 
-    public Grass(int x, int y, Image img) {
+    public int direction;
+    public int count;
+
+    public Grass(int x, int y, int direction, int count, Image img) {
         super(x, y, img);
+        this.direction = direction;
+        this.count = count;
     }
 
     @Override

@@ -78,7 +78,6 @@ public class Bomb extends AnimatedEntity {
                 }
             }
         }
-        //game_sound.sound_effect("sound/bomb_explosion.mp3", 0.2, false);
     }
 
     protected void removeExplosions() {

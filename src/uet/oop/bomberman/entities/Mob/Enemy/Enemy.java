@@ -15,11 +15,10 @@ public abstract class Enemy extends Mob {
 
     public game_sound enemy_die = new game_sound();
 
-    protected double _steps;
     protected Image imgDead;
 
-    private int xd = 0;
-    private int yd = 0;
+    protected int xd = 0;
+    protected int yd = 0;
 
     public Enemy(int x, int y, Image img) {
 
@@ -139,7 +138,6 @@ public abstract class Enemy extends Mob {
                 && e3 instanceof Grass && e4 instanceof Grass)) {
             return false;
         }
-
         return true;
     }
 
@@ -179,8 +177,8 @@ public abstract class Enemy extends Mob {
 
     @Override
     public boolean checkLive() {
-        if(bombermanGame.isExplosion((int) x, (int) y) || bombermanGame.isExplosion((int) x, (int)(y + 1))
-                || bombermanGame.isExplosion((int)(x + 1), (int) y) || bombermanGame.isExplosion((int)(x + 1), (int)(y + 1))) {
+        if(bombermanGame.isExplosion((int)(x + 0.1), (int) (y + 0.1)) || bombermanGame.isExplosion((int) (x + 0.1), (int)(y + 0.9))
+                || bombermanGame.isExplosion((int)(x + 0.9), (int) (y + 0.1)) || bombermanGame.isExplosion((int)(x + 0.9), (int)(y + 0.9))) {
             enemy_die.sound_effect("sound/enemy_die.wav", 0.5, false);
             return false;
         }
